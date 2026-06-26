@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Career Ops Companion",
+  "version": "0.1.0",
+  "description": "Assist with job application autofill and log submitted applications to Career Ops.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "http://localhost:3000/*",
+    "http://127.0.0.1:3000/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "action": {
+    "default_title": "Open Career Ops Companion"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["shared.js", "content-script.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ]
+}

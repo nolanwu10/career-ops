@@ -35,8 +35,8 @@ PRs without a corresponding issue may be closed if they don't align with the pro
 
 **Bigger contributions:**
 - New evaluation dimensions or scoring logic
-- Dashboard TUI features (in `dashboard/`)
-- New skill modes (in `modes/`)
+- Dashboard TUI features (in `classic/dashboard/`)
+- New skill modes (in `classic/modes/`)
 - Script improvements (`.mjs` utilities)
 
 ## Scope: the core vs. the shared layer

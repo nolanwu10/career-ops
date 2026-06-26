@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="ui.css">
+  <title>Career Ops Extension Settings</title>
+</head>
+<body class="options">
+  <main>
+    <h1>Autofill preferences</h1>
+    <p>Values are stored by your local Career Ops app. Leave any field blank to keep it untouched.</p>
+    <form id="settingsForm">
+      <h2>App connection</h2>
+      <label>Career Ops app URL<input name="apiBaseUrl" type="url" placeholder="https://app.example.com"></label>
+      <h2>Contact details</h2>
+      <label>Address line 1<input name="addressLine1" autocomplete="address-line1" placeholder="Street address"></label>
+      <label>Address line 2<input name="addressLine2" autocomplete="address-line2" placeholder="Apartment, suite, unit, etc."></label>
+      <div class="form-grid">
+        <label>City<input name="city" autocomplete="address-level2" placeholder="City"></label>
+        <label>State<input name="state" autocomplete="address-level1" placeholder="State"></label>
+      </div>
+      <label>Phone type
+        <select name="phoneType">
+          <option value="">Leave untouched</option>
+          <option value="Mobile">Mobile</option>
+          <option value="Home">Home</option>
+        </select>
+      </label>
+      <h2>Voluntary demographics</h2>
+      <p class="section-note">These answers are optional. The extension only selects an answer when it finds a confident match.</p>
+      <label>Work authorization
+        <select name="workAuthorization">
+          <option value="">Leave untouched</option>
+          <option value="Yes, authorized to work in the United States">Yes, authorized to work in the U.S.</option>
+          <option value="No, not currently authorized to work in the United States">No, not currently authorized</option>
+          <option value="Prefer not to answer">Prefer not to answer</option>
+        </select>
+      </label>
+      <label>Sponsorship
+        <select name="sponsorship">
+          <option value="">Leave untouched</option>
+          <option value="No, I do not require sponsorship">No sponsorship required</option>
+          <option value="Yes, I require sponsorship">Sponsorship required</option>
+          <option value="Prefer not to answer">Prefer not to answer</option>
+        </select>
+      </label>
+      <label>Veteran status
+        <select name="veteranStatus">
+          <option value="">Leave untouched</option>
+          <option value="I am not a protected veteran">Not a protected veteran</option>
+          <option value="I identify as a protected veteran">Protected veteran</option>
+          <option value="Prefer not to answer">Prefer not to answer</option>
+        </select>
+      </label>
+      <label>Disability status
+        <select name="disabilityStatus">
+          <option value="">Leave untouched</option>
+          <option value="No, I do not have a disability">No disability</option>
+          <option value="Yes, I have a disability">Yes, I have a disability</option>
+          <option value="Prefer not to answer">Prefer not to answer</option>
+        </select>
+      </label>
+      <label>Gender
+        <select name="gender">
+          <option value="">Leave untouched</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Non-binary">Non-binary</option>
+          <option value="Other">Other / self-describe</option>
+          <option value="Prefer not to answer">Prefer not to answer</option>
+        </select>
+      </label>
+      <label>Race or ethnicity
+        <select name="raceEthnicity">
+          <option value="">Leave untouched</option>
+          <option value="American Indian or Alaska Native">American Indian or Alaska Native</option>
+          <option value="Asian">Asian</option>
+          <option value="Black or African American">Black or African American</option>
+          <option value="Hispanic or Latino">Hispanic or Latino</option>
+          <option value="Native Hawaiian or Other Pacific Islander">Native Hawaiian or Other Pacific Islander</option>
+          <option value="White">White</option>
+          <option value="Two or more races">Two or more races</option>
+          <option value="Prefer not to answer">Prefer not to answer</option>
+        </select>
+      </label>
+      <label>Pronouns
+        <select name="pronouns">
+          <option value="">Leave untouched</option>
+          <option value="he/him">He/him</option>
+          <option value="she/her">She/her</option>
+          <option value="they/them">They/them</option>
+          <option value="Other">Other / self-describe</option>
+          <option value="Prefer not to answer">Prefer not to answer</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" name="showLogPrompt"> Show the log prompt after a detected submission</label>
+      <button class="primary" type="submit">Save preferences</button>
+      <p id="status"></p>
+    </form>
+  </main>
+  <script src="options.js"></script>
+</body>
+</html>

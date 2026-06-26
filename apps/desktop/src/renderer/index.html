@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CareerTrack Dashboard</title>
+    <link rel="preload" href="./fonts/AlteHaasGroteskRegular.ttf" as="font" type="font/ttf" />
+    <link rel="preload" href="./fonts/AlteHaasGroteskBold.ttf" as="font" type="font/ttf" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./web-bridge.js" defer></script>
+    <script src="/vendor/jszip.min.js" defer></script>
+    <script src="/vendor/docx-preview.min.js" defer></script>
+    <script src="./renderer.js" defer></script>
+  </head>
+  <body>
+    <div id="app">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <h1 class="sidebar-title">CareerTrack</h1>
+          <button id="sidebarToggleBtn" class="sidebar-toggle" type="button" aria-label="Collapse sidebar" title="Collapse sidebar"></button>
+        </div>
+        <div class="brand">
+          <div class="brand-mark">CT</div>
+          <div class="brand-copy">
+            <span class="brand-kicker">Desktop command center</span>
+            <p>Job search command center</p>
+          </div>
+        </div>
+        <nav class="nav">
+          <button class="nav-item active" data-view="dashboard" title="Dashboard" aria-label="Dashboard">
+            <span class="nav-abbrev" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4.5 10.5 12 4l7.5 6.5"></path>
+                <path d="M6.5 9.5V20h11V9.5"></path>
+                <path d="M10 20v-5h4v5"></path>
+              </svg>
+            </span>
+            <span class="nav-label">Dashboard</span>
+          </button>
+          <button class="nav-item" data-view="discovery" title="Discovery" aria-label="Discovery">
+            <span class="nav-abbrev" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="8"></circle>
+                <path d="m14.5 9.5-4 1.5-1.5 4 4-1.5 1.5-4Z"></path>
+              </svg>
+            </span>
+            <span class="nav-label">Discovery</span>
+          </button>
+          <button class="nav-item" data-view="recommended" title="Recommended" aria-label="Recommended">
+            <span class="nav-abbrev" aria-hidden="true">★</span>
+            <span class="nav-label">Recommended</span>
+          </button>
+          <button class="nav-item" data-view="reports" title="Reports" aria-label="Reports">
+            <span class="nav-abbrev" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 4.5h7l3 3V19.5H7z"></path>
+                <path d="M14 4.5v4h4"></path>
+                <path d="M9.5 12h5"></path>
+                <path d="M9.5 15.5h5"></path>
+              </svg>
+            </span>
+            <span class="nav-label">Reports</span>
+          </button>
+          <button class="nav-item" data-view="coverLetter" title="Cover Letter" aria-label="Cover Letter">
+            <span class="nav-abbrev" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4.5" y="6.5" width="15" height="11" rx="2"></rect>
+                <path d="m5.5 8 6.5 5 6.5-5"></path>
+              </svg>
+            </span>
+            <span class="nav-label">Cover Letter</span>
+          </button>
+          <button class="nav-item" data-view="resumeBuilder" title="Resume Builder" aria-label="Resume Builder">
+            <span class="nav-abbrev" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 3.5h7l3 3V20H7z"></path><path d="M14 3.5v4h4"></path>
+                <path d="M9.5 11h5"></path><path d="M9.5 14h5"></path><path d="M9.5 17h3"></path>
+              </svg>
+            </span>
+            <span class="nav-label">Resumes</span>
+          </button>
+          <button class="nav-item" data-view="knowledge" title="Knowledge Center" aria-label="Knowledge Center">
+            <span class="nav-abbrev" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 5.5h10.5A2.5 2.5 0 0 1 18 8v10.5H7.5A2.5 2.5 0 0 1 5 16z"></path>
+                <path d="M8.5 9h6"></path><path d="M8.5 12h6"></path><path d="M8.5 15h3.5"></path>
+              </svg>
+            </span>
+            <span class="nav-label">Knowledge</span>
+          </button>
+          <button class="nav-item" data-view="settings" title="Settings" aria-label="Settings">
+            <span class="nav-abbrev" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"></path>
+                <path d="M19.4 15a1 1 0 0 0 .2 1.1l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1 1 0 0 0-1.1-.2 1 1 0 0 0-.6.9V20a2 2 0 0 1-4 0v-.2a1 1 0 0 0-.6-.9 1 1 0 0 0-1.1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1 1 0 0 0 .2-1.1 1 1 0 0 0-.9-.6H4a2 2 0 0 1 0-4h.2a1 1 0 0 0 .9-.6 1 1 0 0 0-.2-1.1l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1 1 0 0 0 1.1.2 1 1 0 0 0 .6-.9V4a2 2 0 0 1 4 0v.2a1 1 0 0 0 .6.9 1 1 0 0 0 1.1-.2l.1-.1a2 2 0 0 1 2.8 2.8l-.1.1a1 1 0 0 0-.2 1.1 1 1 0 0 0 .9.6h.2a2 2 0 0 1 0 4h-.2a1 1 0 0 0-.9.6Z"></path>
+              </svg>
+            </span>
+            <span class="nav-label">Settings</span>
+          </button>
+        </nav>
+        <div class="sidebar-card">
+          <span class="label">App data</span>
+          <strong id="workspacePath">Loading...</strong>
+          <button id="chooseRootBtn" class="sidebar-button">Change data source</button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Pipeline</p>
+            <h2 id="pageTitle">Dashboard</h2>
+          </div>
+          <div class="top-actions">
+            <div id="bgTaskPill" class="bg-task-pill" hidden>
+              <span class="bg-task-spinner" aria-hidden="true"></span>
+              <span id="bgTaskLabel">Processing…</span>
+            </div>
+            <button id="refreshBtn" class="button secondary">Refresh</button>
+            <button id="addJobBtn" class="button secondary">Add job link</button>
+          </div>
+          <div id="dashboardHeaderActions" class="dashboard-header-actions">
+            <div class="dashboard-view-toggle" role="group" aria-label="Dashboard view">
+              <button id="dashboardBoardViewBtn" class="active" type="button">Board</button>
+              <button id="dashboardListViewBtn" type="button">List</button>
+            </div>
+            <button id="dashboardAddJobBtn" class="dashboard-add-job" type="button" aria-label="Add job link" title="Add job link">+</button>
+          </div>
+        </header>
+
+        <section class="status-strip" id="statusStrip">Ready.</section>
+        <section class="root-warning" id="rootWarning" hidden>
+          <strong>Application data unavailable.</strong>
+          <span id="rootWarningText"></span>
+          <button id="rootWarningButton" class="button primary small">Choose legacy folder</button>
+        </section>
+
+        <section class="view active" id="dashboardView">
+          <div class="toolbar">
+            <div class="search-wrap">
+              <input id="searchInput" type="search" placeholder="Search company, role, notes..." />
+            </div>
+            <select id="statusFilter"></select>
+            <select id="sortSelect">
+              <option value="score">Sort by fit</option>
+              <option value="date">Sort by date</option>
+              <option value="company">Sort by company</option>
+              <option value="status">Sort by status</option>
+            </select>
+          </div>
+
+          <section class="panel jobs-panel crm-panel">
+            <span id="shownCount" class="visually-hidden">0 applications</span>
+            <div id="crmBoard" class="crm-board"></div>
+          </section>
+          <section id="needToApplyListPanel" class="panel need-to-apply-list-panel" hidden>
+            <div class="panel-header">
+              <div>
+                <h3>Need to Apply</h3>
+                <span id="needToApplyListCount">0 jobs</span>
+              </div>
+            </div>
+            <div id="needToApplyList" class="need-to-apply-list"></div>
+          </section>
+        </section>
+
+        <section class="view" id="discoveryView">
+          <div class="discovery-toolbar">
+            <div class="search-wrap discovery-search">
+              <input id="discoverySearchInput" type="search" placeholder="Search company, role, or source..." />
+            </div>
+            <div class="discovery-toolbar-right">
+              <div class="discovery-selection-actions" id="discoverySelectionActions" hidden>
+                <span id="selectedPendingCount" class="selected-pending-label"></span>
+                <button id="discardPendingBtn" class="button secondary small" type="button">Discard selected</button>
+                <button id="evaluateSelectedBtn" class="button primary small" type="button">Evaluate selected</button>
+              </div>
+              <button id="refreshDiscoveryBtn" class="button secondary" type="button">Scan for jobs</button>
+            </div>
+          </div>
+          <div id="discoveryRefreshProgress" class="discovery-refresh-progress" aria-live="polite" hidden></div>
+          <div class="discovery-filters" aria-label="Discovery filters">
+            <div class="location-filter-wrap">
+              <button id="discoveryLocationBtn" class="filter-button" type="button" aria-haspopup="true" aria-expanded="false">
+                <span id="discoveryLocationBtnLabel">All locations</span>
+                <span class="filter-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div id="discoveryLocationPopover" class="location-popover" hidden>
+                <div class="location-popover-section">
+                  <strong class="location-popover-heading">Country</strong>
+                  <label class="location-radio-label">
+                    <input type="radio" name="locCountry" value="all" checked />
+                    <span class="location-radio-dot"></span>
+                    All countries
+                  </label>
+                  <label class="location-radio-label">
+                    <input type="radio" name="locCountry" value="US" />
+                    <span class="location-radio-dot"></span>
+                    United States
+                  </label>
+                  <label class="location-radio-label">
+                    <input type="radio" name="locCountry" value="CA" />
+                    <span class="location-radio-dot"></span>
+                    Canada
+                  </label>
+                </div>
+                <hr class="location-popover-divider" />
+                <div class="location-popover-section" id="locationSection">
+                  <div class="location-toggle-row">
+                    <strong class="location-popover-heading">Location</strong>
+                    <label class="location-toggle-label">
+                      <span id="locationToggleText">All locations</span>
+                      <input id="locationAllToggle" type="checkbox" checked />
+                      <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                    </label>
+                  </div>
+                  <input id="locationCityInput" class="location-city-input" type="search" placeholder="Enter City" />
+                </div>
+                <div class="location-popover-footer">
+                  <button id="locationResetBtn" class="button secondary small" type="button">Reset</button>
+                  <button id="locationConfirmBtn" class="button primary small" type="button">Confirm</button>
+                </div>
+              </div>
+            </div>
+            <select id="discoverySourceFilter" aria-label="Filter by source">
+              <option value="all">All sources</option>
+            </select>
+            <select id="discoveryDateFilter" aria-label="Filter by posting date">
+              <option value="all">Posted anytime</option>
+              <option value="1">Past 24 hours</option>
+              <option value="3">Past 3 days</option>
+              <option value="7">Past week</option>
+              <option value="14">Past 2 weeks</option>
+              <option value="30">Past month</option>
+            </select>
+            <select id="discoveryFitFilter" aria-label="Filter by role relevance">
+              <option value="relevant">Relevant roles only</option>
+              <option value="strong">Strong matches</option>
+              <option value="all">All roles</option>
+            </select>
+            <select id="discoverySortSelect" aria-label="Sort Discovery jobs">
+              <option value="recommended">Best fit first</option>
+              <option value="newest">Newest first</option>
+              <option value="company">Company A–Z</option>
+            </select>
+          </div>
+          <section class="discovery-lists-bar" id="discoveryListsBar">
+            <div class="discovery-lists-header">
+              <button id="toggleListsCollapseBtn" class="lists-collapse-btn" type="button" aria-expanded="true" title="Collapse job lists">
+                <span class="lists-collapse-chevron">▾</span>
+                <span class="discovery-lists-title">Job Lists</span>
+              </button>
+              <div id="discoverySourcesList" class="discovery-lists-chips"></div>
+              <button id="toggleAddSourceBtn" class="add-source-btn" type="button" title="Add a job list" aria-expanded="false">+</button>
+            </div>
+            <form id="discoverySourceForm" class="discovery-add-form" hidden>
+              <label class="visually-hidden" for="discoverySourceUrl">Public job list URL</label>
+              <input id="discoverySourceUrl" type="url" placeholder="Paste a GitHub, Google Sheets, or job-list URL" required />
+              <button id="importDiscoverySourceBtn" class="button primary small" type="submit">Import</button>
+              <button id="closeDiscoveryImportBtn" class="button secondary small" type="button">Cancel</button>
+            </form>
+            <span id="discoveryImportStatus" class="discovery-import-status"></span>
+          </section>
+          <section class="panel">
+            <span id="pendingCount" class="visually-hidden">0 jobs</span>
+            <div id="bulkQueuePanel" class="bulk-queue" hidden>
+              <div id="bulkQueueList" class="bulk-queue-list"></div>
+            </div>
+            <div class="table-wrap tall">
+              <table class="jobs-table">
+                <thead>
+                  <tr>
+                    <th><span class="visually-hidden">Select</span></th>
+                    <th>Company</th>
+                    <th>Role</th>
+                    <th>Location</th>
+                    <th>Source</th>
+                    <th>Posted</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="pendingBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="recommendedView">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>AWS recommendations</h3>
+                <span id="cloudSyncStatus">Not connected</span>
+              </div>
+              <div class="inline-actions">
+                <button id="cloudLoginBtn" class="button secondary small">Sign in</button>
+                <button id="syncCloudBtn" class="button primary small">Sync now</button>
+              </div>
+            </div>
+            <div id="cloudRecommendationList" class="cloud-recommendation-list">
+              <div class="empty-state">Configure the AWS API connection to load recommendations.</div>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="coverLetterView">
+          <div class="cover-letter-layout">
+            <aside class="panel cover-letter-jobs">
+              <div class="panel-header">
+                <div>
+                  <h3>Need to Apply</h3>
+                  <span id="coverLetterJobCount">0 jobs</span>
+                </div>
+              </div>
+              <div class="cover-letter-search-wrap">
+                <input id="coverLetterSearch" class="cover-letter-search" type="search" placeholder="Search jobs…" aria-label="Search jobs">
+              </div>
+              <div id="coverLetterJobList" class="cover-letter-job-list"></div>
+            </aside>
+            <section class="panel cover-letter-editor-panel">
+              <div class="panel-header">
+                <div>
+                  <h3 id="coverLetterEditorTitle">Cover letter editor</h3>
+                  <span id="coverLetterPath">Choose a job from the left</span>
+                </div>
+                <div class="inline-actions">
+                  <button id="generateSelectedCoverLetterBtn" class="button primary small" disabled>Generate cover letter</button>
+                  <button id="saveCoverLetterBtn" class="button secondary small" disabled>Save DOCX</button>
+                  <button id="openCoverLetterBtn" class="button secondary small" disabled>Open file</button>
+                </div>
+              </div>
+              <div id="coverLetterEmpty" class="cover-letter-empty">Select a Need to Apply job to generate or edit its linked cover letter.</div>
+              <div id="coverLetterWorkspace" class="document-workspace" hidden>
+                <div class="document-meta">
+                  <span>Letter page</span>
+                  <strong>Times New Roman 11 pt</strong>
+                </div>
+                <div class="document-page-shell">
+                  <textarea id="coverLetterEditor" class="editor document-editor" spellcheck="true" aria-label="Cover letter document"></textarea>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="resumeBuilderView">
+          <div class="resume-builder-layout">
+            <aside class="panel resume-variant-panel">
+              <div class="panel-header resume-variant-header">
+                <div><h3>Resume variants</h3><span>Masters and job-specific versions</span></div>
+                <div class="inline-actions">
+                  <button id="createMasterResumeBtn" class="button secondary small">New master</button>
+                  <button id="createTailoredResumeBtn" class="button primary small">Tailor</button>
+                </div>
+              </div>
+              <div id="resumeVariantList" class="resume-variant-list"></div>
+            </aside>
+            <section class="panel resume-builder-workspace">
+              <div class="panel-header resume-builder-toolbar">
+                <div><h3 id="resumeBuilderTitle">Choose a resume</h3><span id="resumeBuilderMeta">Create a master resume to begin.</span></div>
+                <div class="inline-actions">
+                  <div class="resume-view-toggle" role="group" aria-label="Resume view mode">
+                    <button id="resumePreviewModeBtn" class="button secondary small active" disabled>Preview</button>
+                    <button id="resumeEditModeBtn" class="button secondary small" disabled>Edit content</button>
+                  </div>
+                  <button id="openResumeDocxBtn" class="button secondary small" disabled>Open source</button>
+                  <button id="saveResumeVariantBtn" class="button secondary small" disabled>Save version</button>
+                  <button id="deleteResumeVariantBtn" class="button secondary small danger" disabled>Delete</button>
+                  <button id="exportResumeDocxBtn" class="button primary small" disabled>Export DOCX</button>
+                  <button id="exportResumePdfBtn" class="button secondary small" disabled>Export PDF</button>
+                </div>
+              </div>
+              <div id="resumeBuilderEmpty" class="empty-state">Select a master or tailored resume from the left.</div>
+              <div id="resumeBuilderEditorShell" hidden>
+                <div id="resumeCoveragePanel" class="resume-coverage-panel"></div>
+                <section id="resumeSuggestionPanel" class="resume-suggestion-panel">
+                  <div class="document-meta"><span>Suggested changes</span><strong>Review before export</strong></div>
+                  <div id="resumeSuggestionList" class="resume-suggestion-list"></div>
+                </section>
+                <div id="resumeBuilderPreview" class="resume-document-preview">
+                  <div class="resume-preview-loading">Rendering document…</div>
+                </div>
+                <div id="resumeBuilderEditView" class="resume-editor-grid" hidden>
+                  <div class="resume-editor-column">
+                    <div class="document-meta"><span>Editable resume content</span><strong id="resumeVersionLabel">Version 1</strong></div>
+                    <div id="resumePdfEditor" class="resume-pdf-editor" hidden></div>
+                    <textarea id="resumeBuilderEditor" class="editor resume-builder-editor" spellcheck="true" aria-label="Resume content"></textarea>
+                  </div>
+                </div>
+                <details class="resume-history">
+                  <summary>Immutable version history</summary>
+                  <div id="resumeVersionHistory"></div>
+                </details>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="knowledgeView">
+          <section class="knowledge-action-bar" aria-label="Knowledge Center actions">
+            <div class="knowledge-action-group">
+              <span>Add knowledge</span>
+              <div class="inline-actions">
+                <button id="addKnowledgeFactBtn" class="button primary">Add with AI</button>
+                <button id="manualKnowledgeFactBtn" class="button secondary">Manual entry</button>
+              </div>
+            </div>
+            <div class="knowledge-action-group knowledge-source-actions">
+              <span>Import and sync</span>
+              <div class="inline-actions">
+                <button id="uploadKnowledgeDocumentBtn" class="button secondary">Upload document</button>
+                <button id="rebuildKnowledgeBtn" class="button secondary">Rebuild from resumes</button>
+              </div>
+            </div>
+          </section>
+          <section class="knowledge-records-panel">
+            <div id="knowledgeCategoryList" class="knowledge-category-list"></div>
+          </section>
+        </section>
+
+        <section class="view" id="settingsView">
+          <div class="setup-shell">
+            <section class="setup-hero panel">
+              <div>
+                <p class="eyebrow">Guided setup</p>
+                <h3>Get CareerTrack ready for your search</h3>
+                <p>Complete the essentials once. You can refine every choice below at any time.</p>
+              </div>
+              <div class="setup-progress-block">
+                <strong id="setupProgressText">0 of 6 essentials complete</strong>
+                <div class="setup-progress-track" aria-hidden="true"><span id="setupProgressBar"></span></div>
+                <button id="testSetupBtn" class="button secondary">Test setup</button>
+                <button id="closeSetupEditorBtn" class="button secondary setup-editor-only">Back to settings</button>
+              </div>
+            </section>
+
+            <div class="setup-layout">
+              <nav class="setup-steps" aria-label="Setup steps">
+                <button class="setup-step active" data-setup-step="resume"><span>1</span><strong>Import resume</strong><em id="resumeStepStatus">Required</em></button>
+                <button class="setup-step" data-setup-step="profile"><span>2</span><strong>Confirm profile</strong><em id="profileStepStatus">Required</em></button>
+                <button class="setup-step" data-setup-step="goals"><span>3</span><strong>Career goals</strong><em id="goalsStepStatus">Required</em></button>
+                <button class="setup-step" data-setup-step="preferences"><span>4</span><strong>Job preferences</strong><em id="preferencesStepStatus">Required</em></button>
+                <button class="setup-step" data-setup-step="extension"><span>5</span><strong>Browser extension</strong><em id="extensionStepStatus">Recommended</em></button>
+                <button class="setup-step" data-setup-step="recommendation"><span>6</span><strong>Sample recommendation</strong><em id="recommendationStepStatus">Final check</em></button>
+              </nav>
+
+              <section class="setup-workspace panel">
+                <div class="setup-pane active" data-setup-pane="resume">
+                  <div class="setup-pane-header"><div><p class="eyebrow">Step 1</p><h3>Import your resume</h3><p>PDF, DOCX, Markdown, and text files are supported. We extract a profile you can review next.</p></div></div>
+                  <div class="resume-drop-card">
+                    <div class="setup-icon" aria-hidden="true">DOC</div>
+                    <div><strong id="resumeFileName">No resume imported</strong><p id="resumeUploadStatus">Choose your current resume to begin.</p></div>
+                    <button id="uploadResumeBtn" class="button primary">Choose resume</button>
+                  </div>
+                  <div class="setup-actions"><span class="validation-message" id="resumeValidation"></span><button class="button primary setup-next" data-next-step="profile">Continue</button></div>
+                </div>
+
+                <div class="setup-pane" data-setup-pane="profile">
+                  <div class="setup-pane-header"><div><p class="eyebrow">Step 2</p><h3>Confirm your profile</h3><p>Correct anything the resume extraction missed. Required fields are marked.</p></div></div>
+                  <div class="guided-form two-column">
+                    <label><span>Full name *</span><input id="profileFullName" autocomplete="name" required /></label>
+                    <label><span>Email *</span><input id="profileEmail" type="email" autocomplete="email" required /></label>
+                    <label class="wide"><span>Professional headline</span><input id="profileHeadline" placeholder="e.g. Product designer focused on B2B SaaS" /></label>
+                  </div>
+                  <div class="profile-preview"><span>Extracted resume preview</span><p id="profileResumePreview"></p></div>
+                  <div class="setup-actions"><span class="validation-message" id="profileValidation"></span><button class="button primary setup-next" data-next-step="goals">Save and continue</button></div>
+                </div>
+
+                <div class="setup-pane" data-setup-pane="goals">
+                  <div class="setup-pane-header"><div><p class="eyebrow">Step 3</p><h3>Choose target roles and locations</h3><p>Add focused targets for more useful scanning and recommendations.</p></div></div>
+                  <div class="guided-form">
+                    <label><span>Target roles *</span><input id="targetRolesInput" placeholder="Product Manager, Senior Product Manager" /></label>
+                    <p class="field-help">Separate multiple entries with commas.</p>
+                    <label><span>Target locations *</span><input id="targetLocationsInput" placeholder="New York, Remote, Boston" /></label>
+                  </div>
+                  <div class="setup-actions"><span class="validation-message" id="goalsValidation"></span><button class="button primary setup-next" data-next-step="preferences">Save and continue</button></div>
+                </div>
+
+                <div class="setup-pane" data-setup-pane="preferences">
+                  <div class="setup-pane-header"><div><p class="eyebrow">Step 4</p><h3>Set job preferences</h3><p>Hard constraints determine eligibility. Other preferences influence ranking.</p></div></div>
+                  <div class="guided-form two-column">
+                    <label><span>Minimum base compensation</span><input id="compensationMin" type="number" min="0" step="5000" placeholder="100000" /></label>
+                    <label><span>Currency</span><select id="compensationCurrency"><option>USD</option><option>CAD</option><option>EUR</option><option>GBP</option></select></label>
+                    <fieldset class="choice-group wide"><legend>Work mode *</legend><label><input type="checkbox" name="workMode" value="Remote" /> Remote</label><label><input type="checkbox" name="workMode" value="Hybrid" /> Hybrid</label><label><input type="checkbox" name="workMode" value="On-site" /> On-site</label></fieldset>
+                    <fieldset class="choice-group wide"><legend>Seniority *</legend><label><input type="checkbox" name="seniority" value="intern" /> Internship</label><label><input type="checkbox" name="seniority" value="entry" /> Entry level</label><label><input type="checkbox" name="seniority" value="mid" /> Mid level</label><label><input type="checkbox" name="seniority" value="senior" /> Senior</label><label><input type="checkbox" name="seniority" value="lead" /> Lead</label><label><input type="checkbox" name="seniority" value="manager" /> Manager</label><label><input type="checkbox" name="seniority" value="director" /> Director+</label></fieldset>
+                    <fieldset class="choice-group wide"><legend>Employment type *</legend><label><input type="checkbox" name="employmentType" value="internship" /> Internship</label><label><input type="checkbox" name="employmentType" value="full_time" /> Full-time</label><label><input type="checkbox" name="employmentType" value="contract" /> Contract</label><label><input type="checkbox" name="employmentType" value="part_time" /> Part-time</label><label><input type="checkbox" name="employmentType" value="apprenticeship" /> Apprenticeship</label></fieldset>
+                    <label><span>Authorized countries *</span><input id="authorizedCountriesInput" placeholder="US, CA" /></label>
+                    <label><span>Remote location policy</span><select id="remoteLocationPolicy"><option value="authorized_only">Authorized countries only</option><option value="target_only">Target locations only</option><option value="unrestricted">Anywhere</option></select></label>
+                    <label class="wide"><span>Excluded title terms</span><input id="excludedTitlesInput" placeholder="Senior, Director, Sales" /></label>
+                    <fieldset class="choice-group wide"><legend>Enforce as hard constraints</legend><label><input type="checkbox" name="hardConstraint" value="targetRole" /> Target role</label><label><input type="checkbox" name="hardConstraint" value="seniority" /> Seniority</label><label><input type="checkbox" name="hardConstraint" value="employmentType" /> Employment type</label><label><input type="checkbox" name="hardConstraint" value="workMode" /> Work mode</label><label><input type="checkbox" name="hardConstraint" value="geography" /> Geography</label><label><input type="checkbox" name="hardConstraint" value="compensation" /> Compensation</label></fieldset>
+                    <label class="wide"><span>Exceptions</span><textarea id="matchingExceptionsInput" rows="3" placeholder="company: OpenAI | seniority=entry&#10;title: New Grad | employment=full_time | countries=US"></textarea><small>One rule per line. Supported keys: seniority, employment, countries.</small></label>
+                    <label class="toggle-row wide"><input id="requiresSponsorship" type="checkbox" /><span><strong>I may require visa sponsorship</strong><small>Used only when evaluating role eligibility.</small></span></label>
+                  </div>
+                  <div class="setup-actions"><span class="validation-message" id="preferencesValidation"></span><button class="button primary setup-next" data-next-step="extension">Save and continue</button></div>
+                </div>
+
+                <div class="setup-pane" data-setup-pane="extension">
+                  <div class="setup-pane-header"><div><p class="eyebrow">Step 5</p><h3>Install and test the extension</h3><p>The companion extension helps autofill applications and log submitted jobs.</p></div></div>
+                  <ol class="install-list"><li>Open Chrome extensions and enable Developer mode.</li><li>Load the <strong>apps/browser-extension</strong> folder as an unpacked extension.</li><li>Keep CareerTrack running, then test the local connection.</li></ol>
+                  <div class="connection-card"><span class="status-dot" id="extensionStatusDot"></span><div><strong id="extensionConnectionTitle">Connection not tested</strong><p id="extensionConnectionDetail">The app will verify that the extension API is available.</p></div><button id="testExtensionBtn" class="button secondary">Test connection</button></div>
+                  <div class="setup-actions"><span></span><button class="button primary setup-next" data-next-step="recommendation">Continue</button></div>
+                </div>
+
+                <div class="setup-pane" data-setup-pane="recommendation">
+                  <div class="setup-pane-header"><div><p class="eyebrow">Step 6</p><h3>Run a sample recommendation</h3><p>Preview how CareerTrack will use your goals and preferences before you start scanning.</p></div></div>
+                  <div id="sampleRecommendation" class="sample-recommendation empty-state">Run the sample to see your configured search strategy.</div>
+                  <div class="setup-actions"><span class="validation-message" id="recommendationValidation"></span><div class="inline-actions"><button id="runSampleRecommendationBtn" class="button secondary">Run sample</button><button id="finishSetupBtn" class="button primary">Finish setup</button></div></div>
+                </div>
+              </section>
+            </div>
+
+            <section class="advanced-settings">
+              <div class="advanced-heading">
+                <div><p class="eyebrow">Settings</p><h3>Review and refine</h3><p>Everyday preferences are grouped by purpose. Technical controls stay hidden unless advanced mode is enabled.</p></div>
+                <label class="advanced-toggle"><input id="advancedModeToggle" type="checkbox" /><span>Advanced mode</span></label>
+              </div>
+
+              <details class="settings-section" open><summary><span>Profile</span><em id="profileSectionStatus">Needs review</em></summary><div class="settings-section-body"><div id="profileCurrentInfo" class="current-settings-grid"></div><button class="button secondary small jump-to-step" data-step="profile">Edit profile</button></div></details>
+              <details class="settings-section"><summary><span>Career goals</span><em id="goalsSectionStatus">Not set</em></summary><div class="settings-section-body"><div id="goalsCurrentInfo" class="current-settings-grid"></div><button class="button secondary small jump-to-step" data-step="goals">Edit career goals</button></div></details>
+              <details class="settings-section"><summary><span>Job preferences</span><em id="preferencesSectionStatus">Not set</em></summary><div class="settings-section-body"><div id="preferencesCurrentInfo" class="current-settings-grid"></div><button class="button secondary small jump-to-step" data-step="preferences">Edit preferences</button></div></details>
+              <details class="settings-section"><summary><span>Resume and documents</span><em id="documentsSectionStatus">No resume</em></summary><div class="settings-section-body"><div id="documentsCurrentInfo" class="current-settings-grid"></div><div class="resume-library-header"><div><strong>Resume library</strong><p>Rename, delete, or choose which resume Career Ops uses for recommendations, applications, and cover letters.</p></div><button id="addResumeBtn" class="button primary small">Add resume</button></div><div id="resumeLibraryList" class="resume-library-list"></div><div class="inline-actions advanced-only"><button id="chooseCoverLetterFolderBtn" class="button secondary small">Change document folder</button><button id="openResumeSourceBtn" class="button secondary small" disabled>Open primary source</button></div><div class="advanced-only technical-fields"><label><span>Primary resume source path</span><input id="resumeSourcePath" readonly /></label><label><span>Primary resume PDF path</span><input id="resumePdfPath" readonly /></label><label><span>Generated document folder</span><input id="coverLetterOutputDir" readonly /></label><p id="coverLetterExamplesStatus" class="muted-block"></p></div></div></details>
+              <details class="settings-section"><summary><span>Integrations</span><em id="integrationsSectionStatus">Extension not tested</em></summary><div class="settings-section-body"><div id="integrationsCurrentInfo" class="current-settings-grid"></div><button class="button secondary small jump-to-step" data-step="extension">Test browser extension</button><div class="advanced-only integration-advanced"><h4>AI provider</h4><p>Internal evaluation and knowledge tasks use GPT-5.4 mini. The model below applies only to cover-letter generation.</p><div class="guided-form two-column"><label><span>OpenAI API key</span><input id="openAiKey" type="password" placeholder="Leave blank to keep the saved key" /></label><label><span>Cover-letter model</span><select id="openAiModel"></select></label></div><div class="inline-actions"><button id="testAiBtn" class="button secondary small">Test cover-letter model</button><button id="saveAiSettingsBtn" class="button secondary small">Save provider</button></div><p id="aiKeyStatus" class="muted-block"></p><p id="aiTestStatus" class="muted-block"></p></div></div></details>
+              <details class="settings-section"><summary><span>Privacy and data</span><em>Local-first</em></summary><div class="settings-section-body"><label class="toggle-row"><input id="localOnlyToggle" type="checkbox" checked /><span><strong>Keep career data local</strong><small>Resume and job-search data remain on this device.</small></span></label><label class="toggle-row"><input id="analyticsToggle" type="checkbox" /><span><strong>Share anonymous product analytics</strong><small>Disabled by default.</small></span></label><button id="savePrivacyBtn" class="button secondary small">Save privacy choices</button><div class="settings-danger-zone"><div><strong>Clear Knowledge Center</strong><p>Remove all Knowledge Center records. Your resumes and uploaded files will remain.</p></div><button id="clearKnowledgeBtn" class="button danger small" type="button">Clear Knowledge Center</button></div></div></details>
+              <section class="settings-section archive-settings-section">
+                <div class="archive-settings-header">
+                  <div><span>Rejected / Archived jobs</span><em id="archivedCount">0 archived</em></div>
+                  <button id="toggleArchivedJobsBtn" class="button secondary small" type="button" aria-expanded="false" aria-controls="archivedJobsPanel">Show archived jobs</button>
+                </div>
+                <div id="archivedJobsPanel" class="settings-section-body" hidden>
+                  <p class="muted-block">Archived jobs are permanently cleared 21 days after they enter the archive.</p>
+                  <div id="archivedList" class="queue-list"></div>
+                </div>
+              </section>
+              <details class="settings-section advanced-only"><summary><span>Advanced scanner settings</span><em>Technical</em></summary><div class="settings-section-body"><label><span>Positive title keywords</span><textarea id="titleKeywords" class="compact-editor" spellcheck="false"></textarea></label><div class="technical-fields"><p>Raw configuration and application paths are shown only in advanced mode.</p><label><span>Application data path</span><input id="advancedWorkspacePath" readonly /></label></div><button id="saveSettingsBtn" class="button secondary small">Save scanner settings</button></div></details>
+            </section>
+          </div>
+        </section>
+      </main>
+      <div id="archiveDropZone" class="archive-drop-zone" data-crm-status="rejected_archived">Drop here to move to Rejected / Archived</div>
+      <section id="reportOverlay" class="report-overlay" aria-hidden="true">
+        <header class="report-overlay-header">
+          <div>
+            <span>Job report</span>
+            <h3 id="reportTitle">Report</h3>
+          </div>
+          <button id="reportOverlayCloseBtn" class="button secondary" type="button">Close</button>
+        </header>
+        <div class="report-overlay-body">
+          <article id="reportContent" class="report-content report-doc"></article>
+        </div>
+      </section>
+      <aside id="detailDrawer" class="drawer" aria-hidden="true">
+        <div class="drawer-header">
+          <h3 id="drawerTitle">Job detail</h3>
+          <button id="drawerCloseBtn" class="icon-button">Close</button>
+        </div>
+        <div id="drawerContent" class="drawer-content"></div>
+      </aside>
+      <dialog id="addJobDialog" class="job-link-dialog">
+        <form id="addJobForm" method="dialog">
+          <div class="dialog-header">
+            <div>
+              <p class="eyebrow">Manual job</p>
+              <h3>Add a job to the dashboard</h3>
+            </div>
+            <button id="cancelAddJobBtn" class="icon-button" type="button">Close</button>
+          </div>
+          <label class="job-link-field" for="jobLinkInput">
+            <span>Job posting URL</span>
+            <input id="jobLinkInput" type="url" inputmode="url" autocomplete="url" placeholder="https://company.com/jobs/role" required />
+          </label>
+          <label class="job-link-field" for="jobStageSelect">
+            <span>Pipeline stage</span>
+            <select id="jobStageSelect" required>
+              <option value="need_to_apply">Need to Apply</option>
+              <option value="applied">Applied</option>
+              <option value="online_assessment">Online Assessment</option>
+              <option value="interview">Interview</option>
+              <option value="offer">Offer</option>
+            </select>
+          </label>
+          <p class="dialog-help">Paste the job link and choose its current stage. CareerTrack will identify the company and role, then add it directly to the dashboard.</p>
+          <p id="addJobFeedback" class="dialog-feedback" role="status" aria-live="polite"></p>
+          <div class="dialog-actions">
+            <button class="button secondary" type="button" id="cancelAddJobFooterBtn">Cancel</button>
+            <button class="button primary" type="submit" id="submitAddJobBtn">Add job</button>
+          </div>
+        </form>
+      </dialog>
+      <dialog id="resumeBuilderDialog" class="job-link-dialog">
+        <form id="resumeBuilderForm" method="dialog">
+          <div class="dialog-header">
+            <div><p class="eyebrow">Resume Builder</p><h3 id="resumeBuilderDialogTitle">Create resume</h3></div>
+            <button id="closeResumeBuilderDialogBtn" class="icon-button" type="button">Close</button>
+          </div>
+          <input id="resumeBuilderMode" type="hidden" value="master" />
+          <div class="guided-form">
+            <label><span>Resume name</span><input id="resumeBuilderName" maxlength="160" required /></label>
+            <label id="resumeBuilderSourceField"><span>Source resume</span><select id="resumeBuilderSource"></select></label>
+            <label id="resumeBuilderMasterField" hidden><span>Master resume</span><select id="resumeBuilderMaster"></select></label>
+            <label id="resumeBuilderJobField" hidden><span>Target job</span><select id="resumeBuilderJob"></select></label>
+          </div>
+          <p class="dialog-help">Suggested changes will only use approved evidence already stored in your Professional Knowledge Center.</p>
+          <div id="resumeAiLoading" class="resume-ai-loading" role="status" aria-live="polite" hidden>
+            <span class="ai-generation-spinner" aria-hidden="true"></span>
+            <div>
+              <strong id="resumeAiLoadingTitle">Working with GPT-5.4…</strong>
+              <p id="resumeAiLoadingDetail">Reading the resume, job description, and approved knowledge.</p>
+              <div class="resume-ai-progress" aria-hidden="true"></div>
+            </div>
+          </div>
+          <section id="resumeTailorReviewPanel" class="resume-tailor-review" hidden></section>
+          <div class="dialog-actions">
+            <button id="cancelResumeBuilderBtn" class="button secondary" type="button">Cancel</button>
+            <button id="createAiTailoredResumeBtn" class="button primary" type="button" hidden>Create tailored resume</button>
+            <button id="submitResumeBuilderBtn" class="button primary" type="submit">Create</button>
+          </div>
+        </form>
+      </dialog>
+      <dialog id="resumeViewerDialog" class="resume-viewer-dialog">
+        <div class="resume-viewer-header">
+          <div><p class="eyebrow">Resume preview</p><h3 id="resumeViewerTitle">Resume</h3></div>
+          <button id="closeResumeViewerBtn" class="icon-button" type="button">Close</button>
+        </div>
+        <div class="resume-viewer-meta"><span id="resumeViewerStatus"></span><button id="makeViewedResumePrimaryBtn" class="button secondary small">Set as primary</button></div>
+        <article id="resumeViewerContent" class="resume-viewer-content"></article>
+      </dialog>
+      <dialog id="knowledgeFactDialog" class="job-link-dialog knowledge-dialog">
+        <form id="knowledgeFactForm" method="dialog">
+          <div class="dialog-header">
+            <div><p class="eyebrow">Knowledge editor</p><h3 id="knowledgeFactDialogTitle">Add a professional fact</h3></div>
+            <button id="closeKnowledgeFactDialogBtn" class="icon-button" type="button">Close</button>
+          </div>
+          <div class="guided-form">
+            <label><span>Category</span><select id="knowledgeFactCategory" required></select></label>
+            <label><span>Record name</span><input id="knowledgeFactEntity" placeholder="e.g. Cornell University, Acme, Portfolio project" /></label>
+            <label><span>Fact type</span><input id="knowledgeFactType" placeholder="e.g. leadership, work_authorization, metric" /></label>
+            <label><span>Title</span><input id="knowledgeFactTitle" maxlength="180" required placeholder="A short, scannable claim" /></label>
+            <label><span>Fact</span><textarea id="knowledgeFactSummary" rows="5" required placeholder="State the fact precisely. Include relevant dates, scope, or metrics."></textarea></label>
+          </div>
+          <p class="dialog-help">Facts you enter yourself are trusted immediately and attributed to you as the source.</p>
+          <div class="dialog-actions">
+            <button id="cancelKnowledgeFactBtn" class="button secondary" type="button">Cancel</button>
+            <button id="saveKnowledgeFactBtn" class="button primary" type="submit">Save fact</button>
+          </div>
+        </form>
+      </dialog>
+      <dialog id="knowledgeChatDialog" class="job-link-dialog knowledge-dialog">
+        <form id="knowledgeChatForm" method="dialog">
+          <div class="dialog-header">
+            <div><p class="eyebrow">AI knowledge assistant</p><h3>Add experience or facts</h3></div>
+            <button id="closeKnowledgeChatDialogBtn" class="icon-button" type="button">Close</button>
+          </div>
+          <div id="knowledgeChatMessages" class="knowledge-chat-messages">
+            <p>Describe an experience, accomplishment, preference, course, skill, or other professional fact. The AI will compare it with your existing knowledge before adding it.</p>
+          </div>
+          <label class="job-link-field"><span>Message</span><textarea id="knowledgeChatInput" rows="5" required placeholder="Example: Add that I led a five-person analytics team and improved forecast accuracy by 18%."></textarea></label>
+          <div class="dialog-actions">
+            <button id="cancelKnowledgeChatBtn" class="button secondary" type="button">Cancel</button>
+            <button id="sendKnowledgeChatBtn" class="button primary" type="submit">Send to AI</button>
+          </div>
+        </form>
+      </dialog>
+      <dialog id="knowledgeRecordDialog" class="job-link-dialog knowledge-dialog">
+        <form id="knowledgeRecordForm" method="dialog">
+          <div class="dialog-header">
+            <div><p class="eyebrow">Record editor</p><h3>Edit record fields</h3></div>
+            <button id="closeKnowledgeRecordDialogBtn" class="icon-button" type="button">Close</button>
+          </div>
+          <div class="guided-form two-column">
+            <label><span>Category</span><select id="knowledgeRecordCategory"></select></label>
+            <label><span>Record name</span><input id="knowledgeRecordName" required /></label>
+            <label><span>Role</span><input id="knowledgeRecordRole" /></label>
+            <label><span>Degree</span><input id="knowledgeRecordDegree" /></label>
+            <label><span>Field</span><input id="knowledgeRecordField" /></label>
+            <label><span>Location</span><input id="knowledgeRecordLocation" /></label>
+            <label><span>Work mode</span><input id="knowledgeRecordWorkMode" /></label>
+            <label><span>Dates</span><input id="knowledgeRecordDates" /></label>
+          </div>
+          <div class="dialog-actions">
+            <button id="cancelKnowledgeRecordBtn" class="button secondary" type="button">Cancel</button>
+            <button class="button primary" type="submit">Save record</button>
+          </div>
+        </form>
+      </dialog>
+    </div>
+    <div id="aiGenerationOverlay" class="ai-generation-overlay" hidden>
+      <div class="ai-generation-card" role="status" aria-live="polite" aria-atomic="true">
+        <span class="ai-generation-spinner" aria-hidden="true"></span>
+        <div>
+          <strong id="aiGenerationTitle">Generating…</strong>
+          <p>This may take a moment.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -15,5 +15,18 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version: '1.26'
-      - run: npm install
-      - run: node test-all.mjs --quick
+      - name: Install classic dependencies
+        run: npm install
+        working-directory: classic
+      - name: Test classic
+        run: node test-all.mjs --quick
+        working-directory: classic
+      - name: Install desktop dependencies
+        run: npm install
+        working-directory: apps/desktop
+      - name: Check desktop
+        run: npm run check
+        working-directory: apps/desktop
+      - name: Test desktop
+        run: npm test
+        working-directory: apps/desktop
