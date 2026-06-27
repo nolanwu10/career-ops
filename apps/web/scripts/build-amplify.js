@@ -7,6 +7,8 @@ const repoRoot = path.resolve(root, '..', '..');
 const outputRoot = path.join(root, '.amplify-hosting');
 const computeRoot = path.join(outputRoot, 'compute', 'default');
 
+require('dotenv').config({ path: path.join(root, '.env') });
+
 const runtimePackage = {
   name: '@career-ops/web-amplify-runtime',
   private: true,
@@ -60,6 +62,15 @@ app.listen(process.env.PORT, () => {
 });
 `;
 
+const runtimeEnvKeys = [
+  'CLOUD_API_URL',
+  'COVER_LETTER_STREAM_URL',
+  'COGNITO_DOMAIN',
+  'COGNITO_CLIENT_ID',
+  'APP_URL',
+  'NODE_ENV'
+];
+
 function npmCommand() {
   return process.platform === 'win32' ? 'npm.cmd' : 'npm';
 }
@@ -78,6 +89,14 @@ fs.cpSync(
 fs.writeFileSync(path.join(computeRoot, 'index.js'), launcher);
 fs.writeFileSync(path.join(computeRoot, 'package.json'), `${JSON.stringify(runtimePackage, null, 2)}\n`);
 fs.writeFileSync(path.join(outputRoot, 'deploy-manifest.json'), `${JSON.stringify(deployManifest, null, 2)}\n`);
+const runtimeEnv = runtimeEnvKeys
+  .map((key) => [key, process.env[key]])
+  .filter(([, value]) => value != null && value !== '')
+  .map(([key, value]) => `${key}=${String(value).replace(/\r?\n/g, '\\n')}`)
+  .join('\n');
+if (runtimeEnv) {
+  fs.writeFileSync(path.join(computeRoot, '.env'), `${runtimeEnv}\n`);
+}
 
 execSync(`${npmCommand()} install --omit=dev --no-package-lock`, {
   cwd: computeRoot,
