@@ -68,7 +68,11 @@ app.get('/login', (_req, res) => {
 
 app.get('/auth/callback', async (req, res) => {
   try {
-    const { code, state } = req.query;
+    const { code, error, error_description: errorDescription, state } = req.query;
+    if (error) {
+      res.clearCookie('co_login_state');
+      return res.status(400).send(renderAuthError(String(error), errorDescription ? String(errorDescription) : ''));
+    }
     if (!code || !state) return res.redirect('/login');
 
     const loginState = req.cookies.co_login_state ? JSON.parse(req.cookies.co_login_state) : null;
@@ -90,7 +94,8 @@ app.get('/auth/callback', async (req, res) => {
     res.redirect('/');
   } catch (err) {
     console.error('Auth callback error:', err.message);
-    res.redirect('/login?error=callback_failed');
+    res.clearCookie('co_login_state');
+    res.status(500).send(renderAuthError('callback_failed', err.message));
   }
 });
 
@@ -112,6 +117,32 @@ function requireAuth(req, res, next) {
   if (req.cookies.co_access_token) return next();
   if (req.path.startsWith('/api/')) return res.status(401).json({ error: 'Not authenticated' });
   res.redirect('/login');
+}
+
+function renderAuthError(error, description) {
+  const detail = [error, description].filter(Boolean).join(': ');
+  return [
+    '<!doctype html>',
+    '<html lang="en">',
+    '<head><meta charset="utf-8"><title>Login failed</title></head>',
+    '<body style="font-family:system-ui,sans-serif;padding:32px;line-height:1.5">',
+    '<h1>Login failed</h1>',
+    `<p>${escapeHtml(detail || 'Unknown authentication error')}</p>`,
+    '<p><a href="/login">Try again</a></p>',
+    '</body></html>'
+  ].join('');
+}
+
+function escapeHtml(value) {
+  return value.replace(/[&<>"']/g, (char) => (
+    {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[char]
+  ));
 }
 
 async function onboardingState(accessToken) {

@@ -31,7 +31,7 @@ function beginLogin() {
   const params = new URLSearchParams({
     client_id: clientId(),
     response_type: 'code',
-    scope: 'openid email profile',
+    scope: 'openid email',
     redirect_uri: callbackUrl(),
     state,
     code_challenge_method: 'S256',
