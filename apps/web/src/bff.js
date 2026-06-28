@@ -414,8 +414,16 @@ function registerRoutes(app) {
       fs.unlinkSync(req.file.path);
     }
 
-    // Parse resume via Lambda
-    const parsed = await cloudApi.post('/v1/onboarding/resume', { s3Key: key });
+    // Parse resume via Lambda when available, but do not block onboarding on parser issues.
+    let parsed = null;
+    let message = 'Resume uploaded successfully.';
+    try {
+      parsed = await cloudApi.post('/v1/onboarding/resume', { s3Key: key });
+      message = `Resume parsed. Found ${parsed?.roleChips?.length || 0} role suggestions.`;
+    } catch (error) {
+      if (![404, 429, 500, 502, 503, 504].includes(Number(error?.status))) throw error;
+      message = 'Resume uploaded, but automatic parsing is temporarily unavailable. You can continue manually.';
+    }
     const profile = parsed?.profile || {};
 
     res.json({
@@ -428,7 +436,7 @@ function registerRoutes(app) {
         resumes: [{ id: key, name: req.file.originalname || 'Resume', isPrimary: true }]
       },
       resumes: [{ id: key, name: req.file.originalname || 'Resume', isPrimary: true }],
-      message: `Resume parsed. Found ${parsed?.roleChips?.length || 0} role suggestions.`
+      message
     });
   }));
 
