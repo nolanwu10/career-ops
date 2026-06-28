@@ -391,8 +391,15 @@ function registerRoutes(app) {
     const ext = path.extname(req.file.originalname || '').toLowerCase().replace('.', '') || 'pdf';
     const cloudApi = api(req);
 
-    // Get pre-signed S3 PUT URL
-    const { url: uploadUrl, key } = await cloudApi.get(`/v1/onboarding/resume/upload-url?ext=${ext}`);
+    // Fall back to the generic file endpoint so older cloud deployments can still onboard resumes.
+    let uploadTarget;
+    try {
+      uploadTarget = await cloudApi.get(`/v1/onboarding/resume/upload-url?ext=${ext}`);
+    } catch (error) {
+      if (error?.status !== 404) throw error;
+      uploadTarget = await cloudApi.get(`/v1/files/upload-url?type=resume&ext=${ext}`);
+    }
+    const { url: uploadUrl, key } = uploadTarget;
 
     // Upload file bytes to S3
     const fileBuffer = fs.readFileSync(req.file.path);
@@ -507,7 +514,12 @@ function registerRoutes(app) {
 
   app.get('/api/onboarding/resume/upload-url', asyncRoute(async (req, res) => {
     const { ext = 'pdf' } = req.query;
-    res.json(await api(req).get(`/v1/onboarding/resume/upload-url?ext=${encodeURIComponent(ext)}`));
+    try {
+      res.json(await api(req).get(`/v1/onboarding/resume/upload-url?ext=${encodeURIComponent(ext)}`));
+    } catch (error) {
+      if (error?.status !== 404) throw error;
+      res.json(await api(req).get(`/v1/files/upload-url?type=resume&ext=${encodeURIComponent(ext)}`));
+    }
   }));
 
   app.post('/api/onboarding/resume', asyncRoute(async (req, res) => {
