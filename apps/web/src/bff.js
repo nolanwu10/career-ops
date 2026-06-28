@@ -391,53 +391,70 @@ function registerRoutes(app) {
     const ext = path.extname(req.file.originalname || '').toLowerCase().replace('.', '') || 'pdf';
     const cloudApi = api(req);
 
-    // Fall back to the generic file endpoint so older cloud deployments can still onboard resumes.
-    let uploadTarget;
+    // Fall back to manual onboarding when the deployed cloud API does not support resume uploads yet.
+    let uploadTarget = null;
     try {
       uploadTarget = await cloudApi.get(`/v1/onboarding/resume/upload-url?ext=${ext}`);
     } catch (error) {
       if (error?.status !== 404) throw error;
-      uploadTarget = await cloudApi.get(`/v1/files/upload-url?type=resume&ext=${ext}`);
+      try {
+        uploadTarget = await cloudApi.get(`/v1/files/upload-url?type=resume&ext=${ext}`);
+      } catch (fallbackError) {
+        if (fallbackError?.status !== 404) throw fallbackError;
+      }
     }
-    const { url: uploadUrl, key } = uploadTarget;
-
-    // Upload file bytes to S3
     const fileBuffer = fs.readFileSync(req.file.path);
     try {
+      if (!uploadTarget) {
+        return res.json({
+          profile: {},
+          resume: '',
+          roleChips: [],
+          locationChips: [],
+          settings: {
+            resume: { sourceName: req.file.originalname || 'Resume', pdfName: null, sourcePath: null },
+            resumes: []
+          },
+          resumes: [],
+          message: 'Resume selected, but this AWS deployment does not support uploads yet. You can continue onboarding manually.'
+        });
+      }
+
+      const { url: uploadUrl, key } = uploadTarget;
       const s3Res = await fetch(uploadUrl, {
         method: 'PUT',
         body: fileBuffer,
         headers: { 'content-type': mimeType(ext) }
       });
       if (!s3Res.ok) throw new Error(`S3 upload returned ${s3Res.status}`);
+
+      // Parse resume via Lambda when available, but do not block onboarding on parser issues.
+      let parsed = null;
+      let message = 'Resume uploaded successfully.';
+      try {
+        parsed = await cloudApi.post('/v1/onboarding/resume', { s3Key: key });
+        message = `Resume parsed. Found ${parsed?.roleChips?.length || 0} role suggestions.`;
+      } catch (error) {
+        if (![404, 429, 500, 502, 503, 504].includes(Number(error?.status))) throw error;
+        message = 'Resume uploaded, but automatic parsing is temporarily unavailable. You can continue manually.';
+      }
+      const profile = parsed?.profile || {};
+
+      res.json({
+        profile,
+        resume: profile.resumeText || '',
+        roleChips: parsed?.roleChips || [],
+        locationChips: parsed?.locationChips || [],
+        settings: {
+          resume: { sourceName: req.file.originalname || 'Resume', pdfName: null, sourcePath: null },
+          resumes: [{ id: key, name: req.file.originalname || 'Resume', isPrimary: true }]
+        },
+        resumes: [{ id: key, name: req.file.originalname || 'Resume', isPrimary: true }],
+        message
+      });
     } finally {
       fs.unlinkSync(req.file.path);
     }
-
-    // Parse resume via Lambda when available, but do not block onboarding on parser issues.
-    let parsed = null;
-    let message = 'Resume uploaded successfully.';
-    try {
-      parsed = await cloudApi.post('/v1/onboarding/resume', { s3Key: key });
-      message = `Resume parsed. Found ${parsed?.roleChips?.length || 0} role suggestions.`;
-    } catch (error) {
-      if (![404, 429, 500, 502, 503, 504].includes(Number(error?.status))) throw error;
-      message = 'Resume uploaded, but automatic parsing is temporarily unavailable. You can continue manually.';
-    }
-    const profile = parsed?.profile || {};
-
-    res.json({
-      profile,
-      resume: profile.resumeText || '',
-      roleChips: parsed?.roleChips || [],
-      locationChips: parsed?.locationChips || [],
-      settings: {
-        resume: { sourceName: req.file.originalname || 'Resume', pdfName: null, sourcePath: null },
-        resumes: [{ id: key, name: req.file.originalname || 'Resume', isPrimary: true }]
-      },
-      resumes: [{ id: key, name: req.file.originalname || 'Resume', isPrimary: true }],
-      message
-    });
   }));
 
   app.post('/api/resume', asyncRoute(async (req, res) => {
