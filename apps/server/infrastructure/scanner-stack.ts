@@ -299,11 +299,6 @@ export class ScannerStack extends Stack {
 
     // ─── Lambda: API handler ──────────────────────────────────────────────────
 
-    const apiLogGroup = new logs.LogGroup(this, 'ApiLogGroup', {
-      logGroupName: `/aws/lambda/career-ops-${stage}-api`,
-      retention: production ? logs.RetentionDays.THREE_MONTHS : logs.RetentionDays.ONE_MONTH,
-      removalPolicy
-    });
     this.apiWorker = new lambdaNodejs.NodejsFunction(this, 'ApiWorker', {
       functionName: `career-ops-${stage}-api`,
       entry: path.resolve(directory, '..', 'src', 'api-handler.ts'),
@@ -311,7 +306,7 @@ export class ScannerStack extends Stack {
       runtime: lambda.Runtime.NODEJS_22_X,
       timeout: Duration.seconds(30),
       memorySize: 512,
-      logGroup: apiLogGroup,
+      logRetention: production ? logs.RetentionDays.THREE_MONTHS : logs.RetentionDays.ONE_MONTH,
       environment: {
         PROFILES_TABLE: this.profilesTable.tableName,
         ONBOARDING_STATES_TABLE: this.onboardingStatesTable.tableName,
@@ -344,11 +339,6 @@ export class ScannerStack extends Stack {
 
     // ─── Lambda: Resume parser ────────────────────────────────────────────────
 
-    const resumeParserLogGroup = new logs.LogGroup(this, 'ResumeParserLogGroup', {
-      logGroupName: `/aws/lambda/career-ops-${stage}-resume-parser`,
-      retention: production ? logs.RetentionDays.THREE_MONTHS : logs.RetentionDays.ONE_MONTH,
-      removalPolicy
-    });
     this.resumeParserWorker = new lambdaNodejs.NodejsFunction(this, 'ResumeParser', {
       functionName: `career-ops-${stage}-resume-parser`,
       entry: path.resolve(directory, '..', 'src', 'resume-parser.ts'),
@@ -356,7 +346,7 @@ export class ScannerStack extends Stack {
       runtime: lambda.Runtime.NODEJS_22_X,
       timeout: Duration.seconds(30),
       memorySize: 1024,
-      logGroup: resumeParserLogGroup,
+      logRetention: production ? logs.RetentionDays.THREE_MONTHS : logs.RetentionDays.ONE_MONTH,
       environment: {
         PROFILES_TABLE: this.profilesTable.tableName,
         AI_BUDGETS_TABLE: this.aiBudgetsTable.tableName,
@@ -378,11 +368,6 @@ export class ScannerStack extends Stack {
 
     // ─── Lambda: Cover letter generator ──────────────────────────────────────
 
-    const coverLetterLogGroup = new logs.LogGroup(this, 'CoverLetterLogGroup', {
-      logGroupName: `/aws/lambda/career-ops-${stage}-cover-letter`,
-      retention: production ? logs.RetentionDays.THREE_MONTHS : logs.RetentionDays.ONE_MONTH,
-      removalPolicy
-    });
     this.coverLetterWorker = new lambdaNodejs.NodejsFunction(this, 'CoverLetterGenerator', {
       functionName: `career-ops-${stage}-cover-letter`,
       entry: path.resolve(directory, '..', 'src', 'cover-letter-generator.ts'),
@@ -390,7 +375,7 @@ export class ScannerStack extends Stack {
       runtime: lambda.Runtime.NODEJS_22_X,
       timeout: Duration.seconds(60),
       memorySize: 512,
-      logGroup: coverLetterLogGroup,
+      logRetention: production ? logs.RetentionDays.THREE_MONTHS : logs.RetentionDays.ONE_MONTH,
       environment: {
         PROFILES_TABLE: this.profilesTable.tableName,
         APPLICATIONS_TABLE: this.applicationsTable.tableName,
