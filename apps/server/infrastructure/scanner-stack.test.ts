@@ -122,3 +122,44 @@ test('stack optionally provisions Amplify hosting resources for the web app', ()
     ])
   });
 });
+
+test('stack normalizes branch names before deriving hosted callback URLs', () => {
+  const value = template('dev', {
+    amplifyRepository: 'https://github.com/example/career-ops',
+    amplifyBranchName: 'codex/amplify-git-deploy'
+  });
+
+  value.hasResourceProperties('AWS::Amplify::Branch', {
+    BranchName: 'codex/amplify-git-deploy',
+    EnvironmentVariables: Match.arrayWith([
+      Match.objectLike({
+        Name: 'APP_URL',
+        Value: {
+          'Fn::Join': [
+            '',
+            ['https://codex-amplify-git-deploy.', { 'Fn::GetAtt': ['AmplifyApp', 'DefaultDomain'] }]
+          ]
+        }
+      })
+    ])
+  });
+
+  value.hasResourceProperties('AWS::Cognito::UserPoolClient', {
+    CallbackURLs: Match.arrayWith([
+      {
+        'Fn::Join': [
+          '',
+          ['https://codex-amplify-git-deploy.', { 'Fn::GetAtt': ['AmplifyApp', 'DefaultDomain'] }, '/auth/callback']
+        ]
+      }
+    ]),
+    LogoutURLs: Match.arrayWith([
+      {
+        'Fn::Join': [
+          '',
+          ['https://codex-amplify-git-deploy.', { 'Fn::GetAtt': ['AmplifyApp', 'DefaultDomain'] }, '/']
+        ]
+      }
+    ])
+  });
+});

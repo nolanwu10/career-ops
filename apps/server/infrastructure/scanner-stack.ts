@@ -62,6 +62,7 @@ export class ScannerStack extends Stack {
     const production = stage === 'prod';
     const removalPolicy = production ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY;
     const amplifyBranchName = props.amplifyBranchName ?? 'main';
+    const amplifyBranchSubdomain = normalizeAmplifyBranchSubdomain(amplifyBranchName);
     const configuredAmplifyDomain = normalizeDomain(props.amplifyAppDomain);
     const localAppOrigins = ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000'];
     const localCallbackUrls = ['http://localhost:3000/auth/callback', 'http://localhost:3001/auth/callback', 'http://127.0.0.1:43119/auth/callback'];
@@ -94,7 +95,7 @@ export class ScannerStack extends Stack {
     const hostedAppOrigin = configuredAmplifyDomain
       ? `https://${configuredAmplifyDomain}`
       : this.amplifyApp
-        ? `https://${amplifyBranchName}.${this.amplifyApp.attrDefaultDomain}`
+        ? `https://${amplifyBranchSubdomain}.${this.amplifyApp.attrDefaultDomain}`
         : null;
     const allowedAppOrigins = production
       ? [hostedAppOrigin ?? 'https://app.yourdomain.com']
@@ -568,7 +569,7 @@ export class ScannerStack extends Stack {
     }
 
     if (this.amplifyApp) {
-      const appUrl = hostedAppOrigin ?? `https://${amplifyBranchName}.${this.amplifyApp.attrDefaultDomain}`;
+      const appUrl = hostedAppOrigin ?? `https://${amplifyBranchSubdomain}.${this.amplifyApp.attrDefaultDomain}`;
       this.amplifyBranch = new amplify.CfnBranch(this, 'AmplifyBranch', {
         appId: this.amplifyApp.attrAppId,
         branchName: amplifyBranchName,
@@ -727,6 +728,20 @@ function amplifyBuildSpec(): string {
 function normalizeDomain(value?: string): string | undefined {
   if (!value) return undefined;
   return value.replace(/^https?:\/\//, '').replace(/\/$/, '');
+}
+
+function normalizeAmplifyBranchSubdomain(value: string): string {
+  const normalized = value
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-{2,}/g, '-');
+
+  if (!normalized) {
+    throw new Error(`Invalid Amplify branch name for hosted URL: ${value}`);
+  }
+
+  return normalized;
 }
 
 function splitCustomDomain(value: string): { domainName: string; prefix: string } {
