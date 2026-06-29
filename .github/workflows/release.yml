@@ -31,6 +31,6 @@ jobs:
       - name: Publish scaffolder to npm
         if: ${{ steps.release.outputs.release_created }}
         run: npm publish --provenance --access public
-        working-directory: scaffolder
+        working-directory: classic/scaffolder
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,28 +1,29 @@
 "🔴 core-architecture":
   - changed-files:
       - any-glob-to-any-file:
-          - CLAUDE.md
-          - DATA_CONTRACT.md
-          - modes/_shared.md
+          - classic/CLAUDE.md
+          - classic/DATA_CONTRACT.md
+          - classic/modes/_shared.md
 
 "⚠️ agent-behavior":
   - changed-files:
       - any-glob-to-any-file:
-          - modes/*.md
-          - modes/**/*.md
-          - .claude/skills/**
+          - classic/modes/*.md
+          - classic/modes/**/*.md
+          - classic/.claude/skills/**
 
 "🔧 scripts":
   - changed-files:
       - any-glob-to-any-file:
-          - "*.mjs"
-          - batch/**
+          - "classic/*.mjs"
+          - classic/batch/**
 
 "📄 docs":
   - changed-files:
       - any-glob-to-any-file:
-          - docs/**
-          - "README*.md"
+          - classic/docs/**
+          - apps/**/docs/**
+          - "classic/README*.md"
           - CONTRIBUTING.md
           - GOVERNANCE.md
           - CODE_OF_CONDUCT.md
@@ -32,22 +33,22 @@
 "🌐 i18n":
   - changed-files:
       - any-glob-to-any-file:
-          - "README.*.md"
-          - modes/de/**
-          - modes/fr/**
-          - modes/ja/**
-          - modes/ru/**
+          - "classic/README.*.md"
+          - classic/modes/de/**
+          - classic/modes/fr/**
+          - classic/modes/ja/**
+          - classic/modes/ru/**
 
 "📊 dashboard":
   - changed-files:
       - any-glob-to-any-file:
-          - dashboard/**
+          - classic/dashboard/**
 
 "📦 dependencies":
   - changed-files:
       - any-glob-to-any-file:
-          - package.json
-          - package-lock.json
+          - "**/package.json"
+          - "**/package-lock.json"
 
 "⚙️ ci":
   - changed-files:

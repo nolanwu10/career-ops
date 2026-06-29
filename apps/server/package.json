@@ -1,0 +1,41 @@
+{
+  "name": "@career-ops/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Hosted Career Ops ingestion service and infrastructure",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "check": "tsc --noEmit",
+    "test": "tsx --test src/**/*.test.ts infrastructure/**/*.test.ts",
+    "synth": "npm run build:packages && cdk synth --quiet",
+    "bootstrap:dev": "npm run build:packages && cdk bootstrap aws://054526846770/us-east-1",
+    "deploy:dev": "npm run build:packages && cdk deploy CareerOps-Dev-Scanner --require-approval never",
+    "diff:dev": "npm run build:packages && cdk diff CareerOps-Dev-Scanner",
+    "build:packages": "npm --prefix ../../packages/shared-types run build && npm --prefix ../../packages/job-sources run build"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.1075.0",
+    "@aws-sdk/client-dynamodb": "^3.899.0",
+    "@aws-sdk/client-s3": "^3.1075.0",
+    "@aws-sdk/client-secrets-manager": "^3.1075.0",
+    "@aws-sdk/lib-dynamodb": "^3.899.0",
+    "@aws-sdk/s3-request-presigner": "^3.1075.0",
+    "@aws-sdk/util-dynamodb": "^3.899.0",
+    "@career-ops/shared-types": "0.1.0",
+    "aws-cdk-lib": "^2.260.0",
+    "constructs": "^10.4.2",
+    "jose": "^6.1.2",
+    "mammoth": "^1.12.0",
+    "openai": "^4.104.0",
+    "pdf-parse": "^1.1.4"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.152",
+    "@types/node": "^24.10.1",
+    "aws-cdk": "^2.1104.0",
+    "esbuild": "^0.28.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

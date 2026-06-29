@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "baseUrl": ".",
+    "paths": {
+      "@career-ops/shared-types": ["../../packages/shared-types/src/index.ts"],
+      "@career-ops/job-sources": ["../../packages/job-sources/src/index.ts"]
+    },
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noUncheckedIndexedAccess": true,
+    "types": ["node", "aws-lambda"],
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*.ts", "infrastructure/**/*.ts", "bin/**/*.ts"]
+}

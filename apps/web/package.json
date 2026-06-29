@@ -1,0 +1,21 @@
+{
+  "name": "@career-ops/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "Career Ops web server — BFF wrapping the desktop renderer against the cloud API",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "build": "node scripts/build-amplify.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^17.2.3",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "jszip": "^3.10.1",
+    "multer": "^2.2.0",
+    "pdfjs-dist": "^5.4.296"
+  }
+}
